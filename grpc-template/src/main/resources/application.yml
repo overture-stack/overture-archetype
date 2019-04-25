@@ -1,0 +1,44 @@
+server:
+  port : 8080
+  version: @project.version@
+
+  # Refer to [Activating Spring Boot profile with Maven profile](http://dolszewski.com/spring/spring-boot-properties-per-maven-profile/)
+  # And [Automatically Expand Properties at Build Time](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-automatic-expansion)
+spring:
+  application:
+    name: @project.name@
+
+# Url for spring boot admin client service
+  boot:
+    admin:
+      client:
+        url: http://localhost:8082
+
+logging:
+  console:
+    enabled: true
+    threshold: ALL
+  level:
+    root: ERROR
+    #org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    #org.springframework.boot: INFO
+    org.icgc.argo.argo_template_grpc_service: DEBUG
+
+management.endpoints.web.exposure.include: "*"
+
+---
+###############################################################################
+# Profile - "test"
+###############################################################################
+spring:
+  profiles: test
+
+---
+###############################################################################
+# Profile - "auth"
+###############################################################################
+spring:
+  profiles: auth
+
+ego:
+  publicKeyUrl: "https://ego.qa.cancercollaboratory.org/api/oauth/token/public_key"
