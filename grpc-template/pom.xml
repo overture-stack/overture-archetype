@@ -37,22 +37,6 @@
 		<changelist>-SNAPSHOT</changelist>
 		<sha1/>
 
-		<!--Dependencies-->
-		<java.version>11</java.version>
-		<junit.jupiter.version>5.4.1</junit.jupiter.version>
-		<junit.vintage.version>5.4.1</junit.vintage.version>
-		<spring.boot.version>${project.parent.version}</spring.boot.version>
-		<spring.boot.admin.starter.client.version>2.1.3</spring.boot.admin.starter.client.version>
-		<testcontainers.version>1.7.2</testcontainers.version>
-		<lombok.version>1.18.6</lombok.version>
-		<jackson.version>2.9.8</jackson.version>
-		<grpc.version>1.19.0</grpc.version>
-		<jwt.version>3.8.0</jwt.version>
-		<aspectj.version>1.9.2</aspectj.version>
-		<guava.version>27.1-jre</guava.version>
-		<mockito.junit.jupiter.version>2.25.1</mockito.junit.jupiter.version>
-		<junit.platform.commons.version>1.4.1</junit.platform.commons.version>
-
 		<!--Extentions-->
 		<extension.kr.motod.version>1.5.0.Final</extension.kr.motod.version>
 
