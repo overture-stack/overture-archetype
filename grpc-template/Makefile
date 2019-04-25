@@ -73,7 +73,9 @@ $(MVNW_EXE):
 	$(error $(ERROR_HEADER) The mvnw executable "$(MVNW_EXE)" does not exist)
 
 _check_docker_software_exists: $(DOCKER_EXE) $(DOCKER_COMPOSE_EXE)
+
 _check_mvn_software_exists: $(MVNW_EXE)
+	@chmod +x $(MVNW_EXE)
 
 
 #####################################################################
