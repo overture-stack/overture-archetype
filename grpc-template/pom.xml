@@ -25,9 +25,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>bio.overture.archetype</groupId>
-	<artifactId>grpc-archetype-template</artifactId>
-	<version>${revision}${sha}${changelist}</version>
-	<name>grpc-archetype-template</name>
+	<artifactId>grpc-template</artifactId>
+	<version>${revision}${sha1}${changelist}</version>
+	<name>grpc-template</name>
 	<description>Template GRPC project used to generate an archetype</description>
 
 	<properties>
