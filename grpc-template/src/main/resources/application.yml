@@ -1,6 +1,8 @@
 server:
   port : 8080
   version: @project.version@
+  banner:
+    text: @project.name@ Server
 
   # Refer to [Activating Spring Boot profile with Maven profile](http://dolszewski.com/spring/spring-boot-properties-per-maven-profile/)
   # And [Automatically Expand Properties at Build Time](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-properties-and-configuration.html#howto-automatic-expansion)

@@ -18,7 +18,8 @@
 
 package bio.overture.archetype.grpc_template.services;
 
-import bio.overture.archetype.grpc_template.Utils;
+import bio.overture.archetype.grpc_template.util.PublicKeys;
+import bio.overture.archetype.grpc_template.util.Strings;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -52,8 +53,8 @@ public class EgoService {
   public EgoService(@Value("${ego.publicKeyUrl}") UrlResource publicKeyResource) {
     RSAPublicKey egoPublicKey = null;
     try {
-      String key = Utils.toString(publicKeyResource.getInputStream());
-      egoPublicKey = (RSAPublicKey) Utils.getPublicKey(key, "RSA");
+      String key = Strings.toString(publicKeyResource.getInputStream());
+      egoPublicKey = (RSAPublicKey) PublicKeys.getPublicKey(key, "RSA");
     } catch (IOException e) {
       log.info("Cannot get public key of ego");
     }

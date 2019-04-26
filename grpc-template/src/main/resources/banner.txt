@@ -1,9 +1,0 @@
-${Ansi.GREEN}     ___                             _____                         _
-${Ansi.GREEN}    /   |    ____     ____          / ___/  ___    _____ _   __   (_)  _____  ___
-${Ansi.GREEN}   / /| |   / __ \   / __ \         \__ \  / _ \  / ___/| | / /  / /  / ___/ / _ \
-${Ansi.GREEN}  / ___ |  / /_/ /  / /_/ /        ___/ / /  __/ / /    | |/ /  / /  / /__  /  __/
-${Ansi.GREEN} /_/  |_| / .___/  / .___/        /____/  \___/ /_/     |___/  /_/   \___/  \___/
-${Ansi.GREEN}         /_/      /_/
-${Ansi.GREEN}
-${Ansi.RED}  :: Spring Boot${spring-boot.formatted-version} :: ${Ansi.DEFAULT}
-# For more fonts, https://devops.datenkollektiv.de/banner.txt/index.html. This one is "slant"

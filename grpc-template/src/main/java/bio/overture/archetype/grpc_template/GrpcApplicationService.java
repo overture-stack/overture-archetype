@@ -18,6 +18,9 @@
 
 package bio.overture.archetype.grpc_template;
 
+import bio.overture.archetype.grpc_template.util.ProjectBanner;
+import lombok.val;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -27,6 +30,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class GrpcApplicationService {
 
   public static void main(String[] args) {
-    SpringApplication.run(GrpcApplicationService.class, args);
+    val application = new SpringApplication(GrpcApplicationService.class);
+    application.setBanner(new ProjectBanner());
+    application.setBannerMode(Banner.Mode.CONSOLE);
+    application.run(args);
   }
 }

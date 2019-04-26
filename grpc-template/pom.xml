@@ -54,8 +54,9 @@
 		<guava.version>27.1-jre</guava.version>
 		<mockito.junit.jupiter.version>2.25.1</mockito.junit.jupiter.version>
 		<junit.platform.commons.version>1.4.1</junit.platform.commons.version>
+		<figlet.version>0.0.8</figlet.version>
 
-		<!--Extentions-->
+		<!--Extensions-->
 		<extension.kr.motod.version>1.5.0.Final</extension.kr.motod.version>
 
 		<!--Plugins-->
@@ -189,6 +190,11 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
 			<version>${mockito.junit.jupiter.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.lalyos</groupId>
+			<artifactId>jfiglet</artifactId>
+			<version>${figlet.version}</version>
 		</dependency>
 	</dependencies>
 

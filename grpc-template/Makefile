@@ -170,7 +170,7 @@ docker-server-clean: _check_docker_software_exists
 	@$(DOCKER_COMPOSE_COMMAND) down --rmi all -v
 	@echo $(DONE_MESSAGE)
 
-docker-server-build: _check_docker_software_exists $(DOCKERFILE_SERVER) init-submodules
+docker-server-build: _check_docker_software_exists $(DOCKERFILE_SERVER)
 	@echo $(YELLOW)$(INFO_HEADER) "Building docker-compose services"$(END)
 	@$(DOCKER_COMPOSE_COMMAND) build
 	@echo $(DONE_MESSAGE)

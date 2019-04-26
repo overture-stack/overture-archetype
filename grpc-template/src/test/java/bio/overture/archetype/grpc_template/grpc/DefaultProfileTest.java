@@ -18,10 +18,10 @@
 
 package bio.overture.archetype.grpc_template.grpc;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor;
+import bio.overture.archetype.grpc_template.proto.car_service.CarServiceGrpc;
+import bio.overture.archetype.grpc_template.proto.car_service.CreateCarRequest;
+import bio.overture.archetype.grpc_template.proto.car_service.CreateCarResponse;
 import bio.overture.archetype.grpc_template.services.EgoService;
 import io.grpc.Channel;
 import io.grpc.inprocess.InProcessChannelBuilder;
@@ -30,14 +30,14 @@ import io.grpc.stub.StreamObserver;
 import io.grpc.testing.GrpcCleanupRule;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.icgc.argo.proto.template_car_service.CarServiceGrpc;
-import org.icgc.argo.proto.template_car_service.CreateCarRequest;
-import org.icgc.argo.proto.template_car_service.CreateCarResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles("default")
 public class DefaultProfileTest {

@@ -17,12 +17,13 @@
 #
 ##################################################################################
 
-FROM maven:3.6.1-jdk-11-slim as builder
+FROM openjdk:11-jdk-slim as builder
 
 # Build song-server jar
 WORKDIR /srv
 COPY . /srv
-RUN mvn clean package
+
+RUN ./mvnw clean package
 
 ##################################################################################
 
@@ -38,6 +39,6 @@ COPY --from=builder /srv/target/*.jar $JAR_FILE
 WORKDIR $APP_HOME
 
 CMD mkdir -p  $APP_HOME $APP_LOGS \
-        && java -Dlog.path=$APP_LOGS \
-        -jar $JAR_FILE \
-        --spring.config.location=classpath:/application.yml
+		&& java -Dlog.path=$APP_LOGS \
+		-jar $JAR_FILE \
+		--spring.config.location=classpath:/application.yml
