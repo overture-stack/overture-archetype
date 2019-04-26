@@ -20,6 +20,8 @@
 #####################################################################
 #          Project Configuration
 #####################################################################
+ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+
 # Server Config
 API_HOST_PORT := 8080
 
@@ -34,7 +36,9 @@ DOCKER_IMAGE_NAME := $(DOCKER_REPO)/$(DOCKER_PROJ):$(SOURCE_COMMIT)
 # Software Dependencies
 DOCKER_EXE := /usr/bin/docker
 DOCKER_COMPOSE_EXE := /usr/bin/docker-compose
-MVNW_EXE := ./mvnw
+POM_XML := $(ROOT_DIR)/pom.xml
+MVNW_EXE := $(ROOT_DIR)/mvnw
+MVN_COMMAND := $(MVNW_EXE) -f $(POM_XML)
 
 DOCKER_EXE_VERSION := $$($(DOCKER_EXE) version --format '{{.Server.Version}}')
 DOCKER_COMPOSE_EXE_VERSION := $$($(DOCKER_COMPOSE_EXE) version --short)
@@ -69,12 +73,16 @@ $(DOCKER_EXE):
 $(DOCKER_COMPOSE_EXE):
 	$(error $(ERROR_HEADER) The docker-compose executable "$(DOCKER_COMPOSE_EXE)" does not exist)
 
+$(POM_XML):
+	$(error $(ERROR_HEADER) The could not find the pom.xml at $(POM_XML) )
+
 $(MVNW_EXE):
 	$(error $(ERROR_HEADER) The mvnw executable "$(MVNW_EXE)" does not exist)
 
+
 _check_docker_software_exists: $(DOCKER_EXE) $(DOCKER_COMPOSE_EXE)
 
-_check_mvn_software_exists: $(MVNW_EXE)
+_check_mvn_software_exists: $(POM_XML) $(MVNW_EXE)
 	@chmod +x $(MVNW_EXE)
 
 
@@ -98,6 +106,7 @@ info:
 	@echo "**************************************************************"
 	@echo "                  Info"
 	@echo "**************************************************************"
+	@echo "               ROOT_DIR:  $(ROOT_DIR)"
 	@echo "              JAVA_HOME:  ${JAVA_HOME}"
 	@echo "           JAVA_VERSION:  $(JAVA_VERSION)"
 	@echo "               MVNW_EXE:  $(MVNW_EXE)"
