@@ -19,8 +19,7 @@
 version: '3.2'
 services:
   server:
-    container_name: "${DOCKER_PROJ}-${SOURCE_COMMIT}"
-    image: "${DOCKER_REPO}/${DOCKER_PROJ}:${SOURCE_COMMIT}"
+    image: "overture/${DOCKER_PROJ}:${SOURCE_COMMIT}"
     build:
       context: ./
       dockerfile: Dockerfile

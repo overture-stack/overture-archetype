@@ -22,23 +22,20 @@
 #####################################################################
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-# Server Config
-API_HOST_PORT := 8080
-
 # Docker Config
 DOCKERFILE_SERVER := Dockerfile
 SOURCE_COMMIT := $$(git show | grep commit | head -1 | tr -s ' ' | cut -d ' ' -f 2 | cut -c 1-8)
-DOCKER_REPO := mydockerrepo
 DOCKER_PROJ := $$(sed -n -e 's/.*<name>\(.*\)<\/name>.*/\1/p' ./pom.xml)
-DOCKER_CONTAINER_NAME := $(DOCKER_PROJ)-$(SOURCE_COMMIT)
-DOCKER_IMAGE_NAME := $(DOCKER_REPO)/$(DOCKER_PROJ):$(SOURCE_COMMIT)
 
 # Software Dependencies
 DOCKER_EXE := /usr/bin/docker
 DOCKER_COMPOSE_EXE := /usr/bin/docker-compose
-POM_XML := $(ROOT_DIR)/pom.xml
+POM_XML_FILE := $(ROOT_DIR)/pom.xml
+DOCKER_COMPOSE_FILE := $(ROOT_DIR)/docker-compose.yml
 MVNW_EXE := $(ROOT_DIR)/mvnw
-MVN_COMMAND := $(MVNW_EXE) -f $(POM_XML)
+MVN_COMMAND := $(MVNW_EXE) -f $(POM_XML_FILE)
+DOCKER_COMPOSE_COMMAND := DOCKER_PROJ=$(DOCKER_PROJ) SOURCE_COMMIT=$(SOURCE_COMMIT) $(DOCKER_COMPOSE_EXE) -f $(DOCKER_COMPOSE_FILE) -p $(DOCKER_PROJ)
+
 
 DOCKER_EXE_VERSION := $$($(DOCKER_EXE) version --format '{{.Server.Version}}')
 DOCKER_COMPOSE_EXE_VERSION := $$($(DOCKER_COMPOSE_EXE) version --short)
@@ -60,12 +57,6 @@ DONE_MESSAGE := $(YELLOW)$(INFO_HEADER) "- done\n" $(END)
 .PHONY: 
 .SILENT: docker-server-ps docker-server-logs
 
-define exec_docker_compose_command
-	DOCKER_REPO=$(DOCKER_REPO) DOCKER_PROJ=$(DOCKER_PROJ) \
-				SOURCE_COMMIT=${SOURCE_COMMIT} API_HOST_PORT=${API_HOST_PORT} \
-				docker-compose $(1)
-endef
-
 # Internal Targets
 $(DOCKER_EXE):
 	$(error $(ERROR_HEADER) The docker executable "$(DOCKER_EXE)" does not exist)
@@ -73,18 +64,16 @@ $(DOCKER_EXE):
 $(DOCKER_COMPOSE_EXE):
 	$(error $(ERROR_HEADER) The docker-compose executable "$(DOCKER_COMPOSE_EXE)" does not exist)
 
-$(POM_XML):
-	$(error $(ERROR_HEADER) The could not find the pom.xml at $(POM_XML) )
+$(POM_XML_FILE):
+	$(error $(ERROR_HEADER) The could not find the pom.xml file at $(POM_XML_FILE) )
 
 $(MVNW_EXE):
 	$(error $(ERROR_HEADER) The mvnw executable "$(MVNW_EXE)" does not exist)
 
-
 _check_docker_software_exists: $(DOCKER_EXE) $(DOCKER_COMPOSE_EXE)
 
-_check_mvn_software_exists: $(POM_XML) $(MVNW_EXE)
+_check_mvn_software_exists: $(POM_XML_FILE) $(MVNW_EXE)
 	@chmod +x $(MVNW_EXE)
-
 
 #####################################################################
 #          User Targets
@@ -108,20 +97,16 @@ info:
 	@echo "**************************************************************"
 	@echo "               ROOT_DIR:  $(ROOT_DIR)"
 	@echo "              JAVA_HOME:  ${JAVA_HOME}"
+	@echo "            DOCKER_PROJ:  $(DOCKER_PROJ)"
+	@echo "          SOURCE_COMMIT:  $(SOURCE_COMMIT)"
 	@echo "           JAVA_VERSION:  $(JAVA_VERSION)"
-	@echo "               MVNW_EXE:  $(MVNW_EXE)"
 	@echo "           MVNW_VERSION:  $(MVNW_EXE_VERSION)"
-	@echo "             DOCKER_EXE:  $(DOCKER_EXE)"
 	@echo "         DOCKER_VERSION:  $(DOCKER_EXE_VERSION)"
 	@echo "     DOCKER_COMPOSE_EXE:  $(DOCKER_COMPOSE_EXE)"
+	@echo "               MVNW_EXE:  $(MVNW_EXE)"
+	@echo "             DOCKER_EXE:  $(DOCKER_EXE)"
 	@echo " DOCKER_COMPOSE_VERSION:  $(DOCKER_COMPOSE_EXE_VERSION)"
 	@echo "      DOCKERFILE_SERVER:  $(DOCKERFILE_SERVER)"
-	@echo "          SOURCE_COMMIT:  $(SOURCE_COMMIT)"
-	@echo "            DOCKER_REPO:  $(DOCKER_REPO)"
-	@echo "            DOCKER_PROJ:  $(DOCKER_PROJ)"
-	@echo "  DOCKER_CONTAINER_NAME:  $(DOCKER_CONTAINER_NAME)"
-	@echo "      DOCKER_IMAGE_NAME:  $(DOCKER_IMAGE_NAME)"
-	@echo "          API_HOST_PORT:  $(API_HOST_PORT)"
 	@echo
 
 # Local developement related targets
@@ -163,38 +148,38 @@ package-no-test:_check_mvn_software_exists
 # Docker related targets
 docker-server-logs: _check_docker_software_exists
 	@echo $(YELLOW)$(INFO_HEADER) "Outputing docker-compose, logs to STDOUT" $(END)
-	$(call exec_docker_compose_command, logs)
+	$(DOCKER_COMPOSE_COMMAND) logs
 	@echo $(DONE_MESSAGE)
 	
 docker-server-ps: _check_docker_software_exists
 	@echo $(YELLOW)$(INFO_HEADER) "Displaying running services from docker-compose"$(END)
-	$(call exec_docker_compose_command, ps)
+	$(DOCKER_COMPOSE_COMMAND) ps
 	@echo $(DONE_MESSAGE)
 
 docker-server-kill: _check_docker_software_exists
 	@echo $(YELLOW)$(INFO_HEADER) "Killing all docker-compose containers"$(END)
-	$(call exec_docker_compose_command, down)
+	@$(DOCKER_COMPOSE_COMMAND) down
 	@echo $(DONE_MESSAGE)
 
 docker-server-clean: _check_docker_software_exists
 	@echo $(YELLOW)$(INFO_HEADER) "Killing and removing all docker-compose containers, images and volumes"$(END)
-	$(call exec_docker_compose_command, down --rmi all -v)
+	@$(DOCKER_COMPOSE_COMMAND) down --rmi all -v
 	@echo $(DONE_MESSAGE)
 
 docker-server-build: _check_docker_software_exists $(DOCKERFILE_SERVER) init-submodules
 	@echo $(YELLOW)$(INFO_HEADER) "Building docker-compose services"$(END)
-	$(call exec_docker_compose_command, build)
+	@$(DOCKER_COMPOSE_COMMAND) build
 	@echo $(DONE_MESSAGE)
 
 docker-server-start: _check_docker_software_exists
 	@echo $(YELLOW)$(INFO_HEADER) "Starting docker-compose services without building them"$(END)
-	$(call exec_docker_compose_command, up --no-build -d)
+	@$(DOCKER_COMPOSE_COMMAND) up --no-build -d
 	@echo $(DONE_MESSAGE)
 
 docker-server-restart: docker-server-kill docker-server-start
 
 docker-server-all: docker-server-kill
 	@echo $(YELLOW)$(INFO_HEADER) "Building and Starting docker-compose services"$(END)
-	$(call exec_docker_compose_command, up --build -d)
+	@$(DOCKER_COMPOSE_COMMAND) up --build -d
 	@echo $(DONE_MESSAGE)
 
