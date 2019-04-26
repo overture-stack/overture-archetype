@@ -18,17 +18,16 @@
 
 package bio.overture.archetype.grpc_template.util;
 
+import static com.github.lalyos.jfiglet.FigletFont.convertOneLine;
+import static java.util.Arrays.stream;
+
+import java.io.PrintStream;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.boot.Banner;
 import org.springframework.boot.ResourceBanner;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
-
-import java.io.PrintStream;
-
-import static com.github.lalyos.jfiglet.FigletFont.convertOneLine;
-import static java.util.Arrays.stream;
 
 public class ProjectBanner implements Banner {
 
