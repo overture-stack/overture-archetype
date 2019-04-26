@@ -63,6 +63,7 @@
 		<plugin.protobuf.maven.version>0.5.1</plugin.protobuf.maven.version>
 		<plugin.protoc.version>3.6.1</plugin.protoc.version>
 		<plugin.fmt.version>2.8</plugin.fmt.version>
+		<plugin.maven.enforcer.version>3.0.0-M2</plugin.maven.enforcer.version>
 	</properties>
 
 
@@ -247,7 +248,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0-M2</version>
+				<version>${plugin.maven.enforcer.version}</version>
 				<executions>
 					<execution>
 						<id>enforce-maven</id>

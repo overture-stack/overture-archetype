@@ -19,7 +19,6 @@
 version: '3.2'
 services:
   server:
-    image: "overture/${DOCKER_PROJ}:${SOURCE_COMMIT}"
     build:
       context: ./
       dockerfile: Dockerfile

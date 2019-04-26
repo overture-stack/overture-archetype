@@ -20,23 +20,27 @@
 #####################################################################
 #          Project Configuration
 #####################################################################
-ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-# Docker Config
-DOCKERFILE_SERVER := Dockerfile
+# Project Info
 SOURCE_COMMIT := $$(git show | grep commit | head -1 | tr -s ' ' | cut -d ' ' -f 2 | cut -c 1-8)
 DOCKER_PROJ := $$(sed -n -e 's/.*<name>\(.*\)<\/name>.*/\1/p' ./pom.xml)
+ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-# Software Dependencies
+# Required System files
 DOCKER_EXE := /usr/bin/docker
 DOCKER_COMPOSE_EXE := /usr/bin/docker-compose
+
+# Required Project files
+DOCKERFILE_SERVER := Dockerfile
+MVNW_EXE := $(ROOT_DIR)/mvnw
 POM_XML_FILE := $(ROOT_DIR)/pom.xml
 DOCKER_COMPOSE_FILE := $(ROOT_DIR)/docker-compose.yml
-MVNW_EXE := $(ROOT_DIR)/mvnw
+
+# Commands
 MVN_COMMAND := $(MVNW_EXE) -f $(POM_XML_FILE)
-DOCKER_COMPOSE_COMMAND := DOCKER_PROJ=$(DOCKER_PROJ) SOURCE_COMMIT=$(SOURCE_COMMIT) $(DOCKER_COMPOSE_EXE) -f $(DOCKER_COMPOSE_FILE) -p $(DOCKER_PROJ)
+DOCKER_COMPOSE_COMMAND := $(DOCKER_COMPOSE_EXE) -f $(DOCKER_COMPOSE_FILE) -p $(DOCKER_PROJ)
 
-
+# Version Info
 DOCKER_EXE_VERSION := $$($(DOCKER_EXE) version --format '{{.Server.Version}}')
 DOCKER_COMPOSE_EXE_VERSION := $$($(DOCKER_COMPOSE_EXE) version --short)
 MVNW_EXE_VERSION := $$($(MVNW_EXE) -version | head -1 | tr -s ' ' | cut -d ' ' -f 3)
