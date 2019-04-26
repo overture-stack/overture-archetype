@@ -21,18 +21,16 @@ package bio.overture.archetype.grpc_template.grpc;
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor.EgoAuth;
 import bio.overture.archetype.grpc_template.model.CarModel;
 import bio.overture.archetype.grpc_template.model.DriveType;
-import bio.overture.archetype.grpc_template.proto.car_service.CarServiceGrpc;
-import bio.overture.archetype.grpc_template.proto.car_service.CreateCarRequest;
-import bio.overture.archetype.grpc_template.proto.car_service.CreateCarResponse;
-import bio.overture.archetype.grpc_template.proto.car_service.GetCarRequest;
-import bio.overture.archetype.grpc_template.proto.car_service.GetCarResponse;
+import bio.overture.proto.car_service.CarServiceGrpc;
+import bio.overture.proto.car_service.CreateCarRequest;
+import bio.overture.proto.car_service.CreateCarResponse;
+import bio.overture.proto.car_service.GetCarRequest;
+import bio.overture.proto.car_service.GetCarResponse;
 import io.grpc.stub.StreamObserver;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
-
 
 @Slf4j
 @Component

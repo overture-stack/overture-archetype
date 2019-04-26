@@ -18,17 +18,16 @@
 
 package bio.overture.archetype.grpc_template;
 
-import bio.overture.archetype.grpc_template.util.PublicKeys;
-import bio.overture.archetype.grpc_template.util.Strings;
-import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.PublicKey;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import bio.overture.archetype.grpc_template.util.PublicKeys;
+import bio.overture.archetype.grpc_template.util.Strings;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.PublicKey;
+import org.junit.jupiter.api.Test;
 
 class PublicKeysTest {
   @Test
