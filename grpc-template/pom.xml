@@ -26,6 +26,8 @@
 	</parent>
 	<groupId>bio.overture.archetype</groupId>
 	<artifactId>grpc-template</artifactId>
+	<!--Uncomment this for Maven CI Friendly-->
+	<!--<version>${revision}${sha1}${changelist}</version>-->
 	<version>${revision}${sha1}${changelist}</version>
 	<name>grpc-template</name>
 	<description>Template GRPC project used to generate an archetype</description>
