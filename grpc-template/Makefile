@@ -31,7 +31,6 @@ DOCKER_EXE := /usr/bin/docker
 DOCKER_COMPOSE_EXE := /usr/bin/docker-compose
 
 # Required Project files
-DOCKERFILE_SERVER := Dockerfile
 MVNW_EXE := $(ROOT_DIR)/mvnw
 POM_XML_FILE := $(ROOT_DIR)/pom.xml
 DOCKER_COMPOSE_FILE := $(ROOT_DIR)/docker-compose.yml
@@ -110,7 +109,6 @@ info:
 	@echo "               MVNW_EXE:  $(MVNW_EXE)"
 	@echo "             DOCKER_EXE:  $(DOCKER_EXE)"
 	@echo " DOCKER_COMPOSE_VERSION:  $(DOCKER_COMPOSE_EXE_VERSION)"
-	@echo "      DOCKERFILE_SERVER:  $(DOCKERFILE_SERVER)"
 	@echo
 
 # Local developement related targets
@@ -170,7 +168,7 @@ docker-server-clean: _check_docker_software_exists
 	@$(DOCKER_COMPOSE_COMMAND) down --rmi all -v
 	@echo $(DONE_MESSAGE)
 
-docker-server-build: _check_docker_software_exists $(DOCKERFILE_SERVER)
+docker-server-build: _check_docker_software_exists
 	@echo $(YELLOW)$(INFO_HEADER) "Building docker-compose services"$(END)
 	@$(DOCKER_COMPOSE_COMMAND) build
 	@echo $(DONE_MESSAGE)
