@@ -23,7 +23,7 @@
 
 # Project Info
 SOURCE_COMMIT := $$(git show | grep commit | head -1 | tr -s ' ' | cut -d ' ' -f 2 | cut -c 1-8)
-DOCKER_PROJ := $$(sed -n -e 's/.*<name>\(.*\)<\/name>.*/\1/p' ./pom.xml)
+PROJECT_NAME := $$(sed -n -e 's/.*<name>\(.*\)<\/name>.*/\1/p' ./pom.xml)
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 # Required System files
@@ -37,7 +37,7 @@ DOCKER_COMPOSE_FILE := $(ROOT_DIR)/docker-compose.yml
 
 # Commands
 MVN_COMMAND := $(MVNW_EXE) -f $(POM_XML_FILE)
-DOCKER_COMPOSE_COMMAND := $(DOCKER_COMPOSE_EXE) -f $(DOCKER_COMPOSE_FILE) -p $(DOCKER_PROJ)
+DOCKER_COMPOSE_COMMAND := $(DOCKER_COMPOSE_EXE) -f $(DOCKER_COMPOSE_FILE)
 
 # Version Info
 DOCKER_EXE_VERSION := $$($(DOCKER_EXE) version --format '{{.Server.Version}}')
@@ -100,7 +100,7 @@ info:
 	@echo "**************************************************************"
 	@echo "               ROOT_DIR:  $(ROOT_DIR)"
 	@echo "              JAVA_HOME:  ${JAVA_HOME}"
-	@echo "            DOCKER_PROJ:  $(DOCKER_PROJ)"
+	@echo "           PROJECT_NAME:  $(PROJECT_NAME)"
 	@echo "          SOURCE_COMMIT:  $(SOURCE_COMMIT)"
 	@echo "           JAVA_VERSION:  $(JAVA_VERSION)"
 	@echo "           MVNW_VERSION:  $(MVNW_EXE_VERSION)"
