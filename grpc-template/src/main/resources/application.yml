@@ -16,17 +16,41 @@ spring:
       client:
         url: http://localhost:8082
 
+
+retry:
+  # Connection retries in case of connection failure
+  connection:
+
+    # Max number of retries
+    max-retries: 5
+
+    # Initial timeoutMs before the first retry. In milliseconds.
+    initial-backoff: 15000
+
+    # Multiplier that defines value of consequent timeouts before the next retry.
+    # E.g. TIMEOUT(n) = TIMEOUT(n-1) * MULTIPLIER
+    multiplier: 2.0
+
 logging:
   console:
     enabled: true
     threshold: ALL
   level:
-    root: ERROR
+    root: info
     #org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
     #org.springframework.boot: INFO
     org.icgc.argo.argo_template_grpc_service: DEBUG
 
 management.endpoints.web.exposure.include: "*"
+
+ego:
+  url: "https://ego.qa.cancercollaboratory.org/api"
+  client-id: "program-service"
+  client-secret: "qa-program-service"
+
+app:
+  grpc-enabled: true
+  grpc-port: 50051
 
 ---
 ###############################################################################
@@ -42,5 +66,19 @@ spring:
 spring:
   profiles: auth
 
+---
+###############################################################################
+# Profile - "docker"
+###############################################################################
+spring.profiles: docker
+spring:
+  profiles:
+    include: [default]
+  boot:
+    admin:
+      client:
+        url: http://localhost:9081
+
 ego:
-  publicKeyUrl: "https://ego.qa.cancercollaboratory.org/api/oauth/token/public_key"
+  url: "http://localhost:9082"
+

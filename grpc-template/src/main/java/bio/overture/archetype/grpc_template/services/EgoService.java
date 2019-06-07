@@ -18,8 +18,6 @@
 
 package bio.overture.archetype.grpc_template.services;
 
-import bio.overture.archetype.grpc_template.util.PublicKeys;
-import bio.overture.archetype.grpc_template.util.Strings;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -27,49 +25,37 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.IOException;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Optional;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Optional;
+
+//TODO [rtisma]: refactor into service and client
 @Slf4j
 @Service
-@Profile("auth")
 public class EgoService {
 
   private final RSAPublicKey egoPublicKey;
 
   @Autowired
-  public EgoService(@Value("${ego.publicKeyUrl}") UrlResource publicKeyResource) {
-    RSAPublicKey egoPublicKey = null;
-    try {
-      String key = Strings.toString(publicKeyResource.getInputStream());
-      egoPublicKey = (RSAPublicKey) PublicKeys.getPublicKey(key, "RSA");
-    } catch (IOException e) {
-      log.info("Cannot get public key of ego");
-    }
-    this.egoPublicKey = egoPublicKey;
-  }
-
-  public EgoService(RSAPublicKey egoPublicKey) {
+  public EgoService(@NonNull RSAPublicKey egoPublicKey) {
     this.egoPublicKey = egoPublicKey;
   }
 
   public Optional<EgoToken> verifyToken(String jwtToken) {
     try {
-      Algorithm algorithm = Algorithm.RSA256(this.egoPublicKey, null);
-      JWTVerifier verifier =
-          JWT.require(algorithm).withIssuer("ego").build(); // Reusable verifier instance
+      Algorithm algorithm = Algorithm.RSA256(egoPublicKey, null);
+      JWTVerifier verifier = JWT.require(algorithm)
+              .withIssuer("ego")
+              .build(); //Reusable verifier instance
       val jwt = verifier.verify(jwtToken);
       return parseToken(jwt);
     } catch (JWTVerificationException | NullPointerException e) {
@@ -82,14 +68,15 @@ public class EgoService {
     try {
       EgoToken egoToken = new EgoToken(jwt, jwt.getClaim("context").as(Context.class));
       return Optional.of(egoToken);
-    } catch (JWTDecodeException exception) {
-      // Invalid token
+    } catch (JWTDecodeException exception){
+      //Invalid token
       return Optional.empty();
     }
   }
 
+
   public static class EgoToken extends Context.User {
-    public final DecodedJWT jwt;
+    final DecodedJWT jwt;
 
     EgoToken(@NotNull DecodedJWT jwt, @NotNull Context context) {
       this.jwt = jwt;
@@ -98,15 +85,12 @@ public class EgoService {
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @Setter
-  @Getter
+  @Setter @Getter
   private static class Context {
-    //      public String[] scope;
     User user;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @Setter
-    @Getter
+    @Setter @Getter
     private static class User {
       String name;
       String email;
@@ -122,4 +106,6 @@ public class EgoService {
       String[] permissions;
     }
   }
+
 }
+

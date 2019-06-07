@@ -1,0 +1,78 @@
+package bio.overture.archetype.grpc_template.client;
+
+import bio.overture.archetype.grpc_template.properties.EgoProperties;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.retry.support.RetryTemplate;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Supplier;
+
+import static java.lang.String.format;
+import static lombok.Lombok.checkNotNull;
+import static org.springframework.http.HttpMethod.GET;
+
+@Slf4j
+@RequiredArgsConstructor
+public class EgoClient {
+
+  @NonNull private final EgoProperties egoProperties;
+  @NonNull private final RetryTemplate retryTemplate;
+  @NonNull private final RestTemplate restTemplate;
+
+  public String getPublicKey(){
+    return retry(() -> restTemplate.getForEntity(egoProperties.getUrl() + "/oauth/token/public_key", String.class)).getBody();
+  }
+
+  public List<EgoUser> listUsers(int offset, int limit, String query){
+    val egoPage = retry(() -> restTemplate.exchange(egoProperties.getUrl() + format("/users?offset=%s&limit=%s&query=%s", offset, limit, query),
+        GET, null, new ParameterizedTypeReference<EgoPage<EgoUser>>() { })).getBody();
+    checkNotNull(egoPage, "body was null, was expecting not null");
+    return egoPage.getResultSet();
+  }
+
+  private <T> T retry(Supplier<T> supplier){
+    return retryTemplate.execute(r -> supplier.get());
+  }
+
+  private void retryRunnable(Runnable runnable){
+    retryTemplate.execute(r -> {
+      runnable.run();
+      return r;
+    });
+  }
+
+  @Data
+  public static class EgoPage<T> {
+    public List<T> resultSet;
+    public Integer limit;
+    public Integer offset;
+  }
+
+  @Data
+  @Accessors(chain = true)
+  public static class EgoUser {
+    private UUID id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private EgoUserType type;
+    private EgoStatusType status;
+  }
+
+  public enum EgoStatusType {
+    APPROVED, DISABLED, REJECTED, PENDING ;
+  }
+
+  public enum EgoUserType {
+    USER,ADMIN;
+  }
+
+}

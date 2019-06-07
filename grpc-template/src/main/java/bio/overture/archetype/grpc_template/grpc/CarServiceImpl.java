@@ -18,6 +18,7 @@
 
 package bio.overture.archetype.grpc_template.grpc;
 
+import bio.overture.archetype.grpc_template.client.EgoClient;
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor.EgoAuth;
 import bio.overture.archetype.grpc_template.model.CarModel;
 import bio.overture.archetype.grpc_template.model.DriveType;
@@ -27,14 +28,24 @@ import bio.overture.proto.car_service.CreateCarResponse;
 import bio.overture.proto.car_service.GetCarRequest;
 import bio.overture.proto.car_service.GetCarResponse;
 import io.grpc.stub.StreamObserver;
-import java.util.UUID;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Slf4j
-@Component
+@Service
 public class CarServiceImpl extends CarServiceGrpc.CarServiceImplBase {
+
+  private final EgoClient egoClient;
+
+  @Autowired
+  public CarServiceImpl(@NonNull EgoClient egoClient) {
+    this.egoClient = egoClient;
+  }
 
   @Override
   @EgoAuth(typesAllowed = {"ADMIN"})
@@ -57,6 +68,9 @@ public class CarServiceImpl extends CarServiceGrpc.CarServiceImplBase {
             .build();
 
     // do something with carModel...
+
+    // For example, list the first 100 users from ego
+    val userPage = egoClient.listUsers(0, 100, "");
 
     val response = CreateCarResponse.newBuilder().setId(newId.toString()).setCar(carData).build();
     responseObserver.onNext(response);

@@ -18,19 +18,17 @@
 
 package bio.overture.archetype.grpc_template.grpc.interceptor;
 
-import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
-
 import bio.overture.archetype.grpc_template.services.EgoService;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import io.grpc.*;
+import io.grpc.Context;
+import io.grpc.Contexts;
+import io.grpc.Metadata;
+import io.grpc.ServerCall;
+import io.grpc.ServerCallHandler;
+import io.grpc.Status;
+import io.grpc.StatusException;
 import io.grpc.stub.StreamObserver;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.List;
-import java.util.Set;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,6 +38,15 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.List;
+import java.util.Set;
+
+import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
 
 @Component
 @Profile("auth")

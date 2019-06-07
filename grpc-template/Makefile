@@ -185,3 +185,22 @@ docker-server-all: docker-server-kill
 	@$(DOCKER_COMPOSE_COMMAND) up --build -d
 	@echo $(DONE_MESSAGE)
 
+# Developement related targets
+dev-start: _check_docker_software_exists
+	@echo $(YELLOW)$(INFO_HEADER) "Starting services for local developement"$(END)
+	@$(DOCKER_COMPOSE_COMMAND) up --no-deps -d ego-api ego-postgres admin
+	@echo $(DONE_MESSAGE)
+
+dev-stop: _check_docker_software_exists
+	@echo $(YELLOW)$(INFO_HEADER) "Stopping services for local developement"$(END)
+	@$(DOCKER_COMPOSE_COMMAND) kill ego-api ego-postgres admin
+	@$(DOCKER_COMPOSE_COMMAND) rm -f ego-api ego-postgres admin
+	@echo $(DONE_MESSAGE)
+
+fresh-ego: _check_docker_software_exists
+	@echo $(YELLOW)$(INFO_HEADER) "Restarting a fresh empty instance of the ego service"$(END)
+	@$(DOCKER_COMPOSE_COMMAND) kill ego-postgres ego-api
+	@$(DOCKER_COMPOSE_COMMAND) rm -f ego-postgres ego-api
+	@$(DOCKER_COMPOSE_COMMAND) up --no-deps -d ego-postgres ego-api
+	@echo $(DONE_MESSAGE)
+
