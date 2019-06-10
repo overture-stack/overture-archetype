@@ -36,14 +36,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Optional;
 
-import static bio.overture.archetype.grpc_template.properties.AppProperties.APP_PROPERTIES_PREFIX;
+import static io.grpc.health.v1.HealthCheckResponse.ServingStatus.NOT_SERVING;
+import static io.grpc.health.v1.HealthCheckResponse.ServingStatus.SERVING;
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(value= APP_PROPERTIES_PREFIX+"."+AppProperties.Fields.grpcEnabled)
-//@ConditionalOnProperty(value= "app.grpc-enabled")
+@ConditionalOnProperty(value = "app.grpc-enabled")
 public class GRpcServerRunner implements CommandLineRunner, DisposableBean {
 
   private Server server;
@@ -53,11 +53,11 @@ public class GRpcServerRunner implements CommandLineRunner, DisposableBean {
   private final HealthStatusManager healthStatusManager;
   private final AppProperties appProperties;
 
-
   @Autowired
-  public GRpcServerRunner(@NonNull CarServiceImpl carServiceImpl,
+  public GRpcServerRunner(
+      @NonNull CarServiceImpl carServiceImpl,
       @NonNull AuthInterceptor authInterceptor,
-      @NonNull AppProperties appProperties ) {
+      @NonNull AppProperties appProperties) {
     this.carServiceImpl = carServiceImpl;
     this.authInterceptor = authInterceptor;
     this.healthStatusManager = new HealthStatusManager();
@@ -69,38 +69,48 @@ public class GRpcServerRunner implements CommandLineRunner, DisposableBean {
 
     // Interceptor bean depends on run profile.
     val templateCarService = ServerInterceptors.intercept(carServiceImpl, authInterceptor);
-    healthStatusManager.setStatus("car_service.CarService", ServingStatus.SERVING);
 
-    try{
-      server = ServerBuilder.forPort(appProperties.getGrpcPort())
-          .addService(templateCarService)
-          .addService(ProtoReflectionService.newInstance())
-          .addService(healthStatusManager.getHealthService())
-          .build()
-          .start();
+    try {
+      server =
+          ServerBuilder.forPort(appProperties.getGrpcPort())
+              .addService(templateCarService)
+              .addService(ProtoReflectionService.newInstance())
+              .addService(healthStatusManager.getHealthService())
+              .build()
+              .start();
+      setHealthStatus(carServiceImpl, SERVING);
     } catch (IOException e) {
       log.error("gRPC server cannot be started: {}", e.getMessage());
+      setHealthStatus(carServiceImpl, NOT_SERVING);
     }
 
-    log.info("gRPC Server started, listening on port " + appProperties.getGrpcPort());
+    log.info("gRPC Server started, listening on port {}", appProperties.getGrpcPort());
     startDaemonAwaitThread();
   }
 
+  private void setHealthStatus(Healthable healthableService, ServingStatus status){
+    healthStatusManager.setStatus(healthableService.getHealthCheckName(), status);
+  }
+
   private void startDaemonAwaitThread() {
-    Thread awaitThread = new Thread(()->{
-      try {
-        this.server.awaitTermination();
-      } catch (InterruptedException e) {
-        log.error("gRPC server stopped: {}", e.getMessage());
-      }
-    });
+    Thread awaitThread =
+        new Thread(
+            () -> {
+              try {
+                this.server.awaitTermination();
+              } catch (InterruptedException e) {
+                log.error("gRPC server stopped: {}", e.getMessage());
+              }
+            });
     awaitThread.start();
   }
 
   @Override
   public final void destroy() throws Exception {
     log.info("Shutting down gRPC server ...");
-    Optional.ofNullable(server).ifPresent(Server::shutdown);
+    if (!isNull(server)){
+      server.shutdown();
+    }
     log.info("gRPC server stopped.");
   }
 }

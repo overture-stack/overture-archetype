@@ -18,31 +18,25 @@
 
 package bio.overture.archetype.grpc_template.properties;
 
-import bio.overture.archetype.grpc_template.client.EgoClient;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.security.interfaces.RSAPublicKey;
 
-import static bio.overture.archetype.grpc_template.util.PublicKeys.getPublicKey;
 import static java.time.Duration.ofSeconds;
 
 /** Ego external configuration, served as metadata for application.yml */
 @Slf4j
-@Setter @Getter
+@Setter
+@Getter
 @Validated
 @Component
 @ConfigurationProperties(prefix = "ego")
@@ -50,66 +44,26 @@ public class EgoProperties {
 
   private static final int DEFAULT_TIMEOUT_SECONDS = 15;
   private static final boolean DEFAULT_RETRY_PUBLIC_KEY = true;
-  /**
-   * Ego api url
-   */
-  @NotNull
-  private String url;
 
-  /**
-   * Ego client Id, it has to be manually added in ego
-   */
-  @NotNull
-  private String clientId;
+  /** Ego api url */
+  @NotNull private String url;
 
-  /**
-   * Ego client secret
-   */
-  @NotNull
-  private String clientSecret;
+  /** Ego client Id, it has to be manually added in ego */
+  @NotNull private String clientId;
 
-  @NotNull
-  @Positive
-  private Integer connectTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
+  /** Ego client secret */
+  @NotNull private String clientSecret;
 
-  @NotNull
-  @Positive
-  private Integer readTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
+  @NotNull @Positive private Integer connectTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
 
-  private Boolean retryPublicKey = true;
+  @NotNull @Positive private Integer readTimeoutSeconds = DEFAULT_TIMEOUT_SECONDS;
 
-  private RestTemplate buildEgoRestTemplate() {
+  @Bean
+  public RestTemplate egoRestTemplate() {
     return new RestTemplateBuilder()
         .basicAuthentication(clientId, clientSecret)
         .setConnectTimeout(ofSeconds(connectTimeoutSeconds))
         .setReadTimeout(ofSeconds(readTimeoutSeconds))
         .build();
   }
-
-  @Bean
-  public EgoClient egoClient(@Autowired RetryProperties retryProperties){
-    return new EgoClient(this, retryProperties.buildStrictRetryTemplate(), buildEgoRestTemplate());
-  }
-
-  @Bean
-  public RSAPublicKey egoPublicKey (@Autowired RetryProperties retryProperties){
-    val lenientEgoClient = new EgoClient(this, retryProperties.buildLenientRetryTemplate(), buildEgoRestTemplate());
-    RSAPublicKey egoPublicKey = null;
-    try {
-      log.info("Start fetching ego public key");
-      val key = lenientEgoClient.getPublicKey();
-      log.info("Ego public key is fetched");
-      egoPublicKey = (RSAPublicKey) getPublicKey(key, "RSA");
-    } catch (RestClientException e){
-      if( e instanceof HttpStatusCodeException){
-        val httpException = (HttpStatusCodeException)e;
-        log.error("Cannot get public key of ego: {}", httpException.getResponseBodyAsString());
-      } else {
-        log.error("Cannot get public key of ego: {}", e.getMessage());
-      }
-    }
-    return egoPublicKey;
-  }
-
-
 }

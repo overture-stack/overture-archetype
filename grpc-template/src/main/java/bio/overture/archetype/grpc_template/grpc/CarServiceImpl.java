@@ -36,15 +36,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+
 @Slf4j
 @Service
-public class CarServiceImpl extends CarServiceGrpc.CarServiceImplBase {
+public class CarServiceImpl extends CarServiceGrpc.CarServiceImplBase implements Healthable {
 
   private final EgoClient egoClient;
 
   @Autowired
   public CarServiceImpl(@NonNull EgoClient egoClient) {
     this.egoClient = egoClient;
+  }
+
+  @Override
+  public String getHealthCheckName() {
+    return CarServiceGrpc.SERVICE_NAME;
   }
 
   @Override
@@ -70,7 +76,7 @@ public class CarServiceImpl extends CarServiceGrpc.CarServiceImplBase {
     // do something with carModel...
 
     // For example, list the first 100 users from ego
-    val userPage = egoClient.listUsers(0, 100, "");
+    val users = egoClient.listUsers(0, 100, "");
 
     val response = CreateCarResponse.newBuilder().setId(newId.toString()).setCar(carData).build();
     responseObserver.onNext(response);

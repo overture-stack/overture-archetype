@@ -19,7 +19,7 @@
 package bio.overture.archetype.grpc_template.grpc;
 
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor;
-import bio.overture.archetype.grpc_template.services.EgoService;
+import bio.overture.archetype.grpc_template.services.EgoSecurity;
 import bio.overture.proto.car_service.CarServiceGrpc;
 import bio.overture.proto.car_service.CreateCarRequest;
 import bio.overture.proto.car_service.CreateCarResponse;
@@ -46,7 +46,7 @@ public class DefaultProfileTest {
 
   private String serverName;
 
-  @Mock private EgoService egoService;
+  @Mock private EgoSecurity egoSecurity;
 
   @Rule public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
 
@@ -84,7 +84,7 @@ public class DefaultProfileTest {
     val blockingStub = CarServiceGrpc.newBlockingStub(channel);
 
     // EgoService is not initialized under default profile
-    assertNull(egoService);
+    assertNull(egoSecurity);
 
     // Ego interceptor is not stopping create request, as expected
     val detail = blockingStub.createCar(CreateCarRequest.getDefaultInstance());

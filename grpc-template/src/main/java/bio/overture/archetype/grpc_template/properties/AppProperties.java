@@ -13,23 +13,17 @@ import javax.validation.constraints.NotNull;
 @Slf4j
 @Component
 @Validated
-@Setter @Getter
+@Setter
+@Getter
 @FieldNameConstants
-@ConfigurationProperties(prefix=AppProperties.APP_PROPERTIES_PREFIX)
+@ConfigurationProperties(prefix = AppProperties.APP_PROPERTIES_PREFIX)
 public class AppProperties {
   public static final String APP_PROPERTIES_PREFIX = "app";
 
-  /**
-   * Port used by grpc server
-   */
-  @NotNull
-  private Integer grpcPort;
+  /** Port used by grpc server */
+  @NotNull private Integer grpcPort;
 
-  /**
-   * GRPC can be disabled when doing test
-   */
-  @NotNull
-  private Boolean grpcEnabled;
+  /** GRPC can be disabled when doing test */
+  @NotNull private Boolean grpcEnabled;
 
 }
-

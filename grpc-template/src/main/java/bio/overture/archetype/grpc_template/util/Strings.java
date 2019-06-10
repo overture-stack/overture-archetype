@@ -25,7 +25,7 @@ import java.io.InputStreamReader;
 
 public class Strings {
 
-  public static String toString(InputStream in) throws IOException {
+  public static String inputStreamToString(InputStream in) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
     StringBuilder result = new StringBuilder();
     String line;

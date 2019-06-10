@@ -25,6 +25,9 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Optional;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -32,30 +35,28 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Optional;
-
-//TODO [rtisma]: refactor into service and client
 @Slf4j
 @Service
-public class EgoService {
+@Profile("auth")
+public class EgoSecurity {
+
+  private static final String EGO = "ego";
 
   private final RSAPublicKey egoPublicKey;
 
   @Autowired
-  public EgoService(@NonNull RSAPublicKey egoPublicKey) {
+  public EgoSecurity(@NonNull RSAPublicKey egoPublicKey) {
     this.egoPublicKey = egoPublicKey;
   }
 
   public Optional<EgoToken> verifyToken(String jwtToken) {
     try {
       Algorithm algorithm = Algorithm.RSA256(egoPublicKey, null);
-      JWTVerifier verifier = JWT.require(algorithm)
-              .withIssuer("ego")
-              .build(); //Reusable verifier instance
+      JWTVerifier verifier =
+          JWT.require(algorithm).withIssuer(EGO).build(); // Reusable verifier instance
       val jwt = verifier.verify(jwtToken);
       return parseToken(jwt);
     } catch (JWTVerificationException | NullPointerException e) {
@@ -68,12 +69,11 @@ public class EgoService {
     try {
       EgoToken egoToken = new EgoToken(jwt, jwt.getClaim("context").as(Context.class));
       return Optional.of(egoToken);
-    } catch (JWTDecodeException exception){
-      //Invalid token
+    } catch (JWTDecodeException exception) {
+      // Invalid token
       return Optional.empty();
     }
   }
-
 
   public static class EgoToken extends Context.User {
     final DecodedJWT jwt;
@@ -85,12 +85,14 @@ public class EgoService {
   }
 
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @Setter @Getter
+  @Setter
+  @Getter
   private static class Context {
     User user;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @Setter @Getter
+    @Setter
+    @Getter
     private static class User {
       String name;
       String email;
@@ -106,6 +108,4 @@ public class EgoService {
       String[] permissions;
     }
   }
-
 }
-

@@ -18,16 +18,17 @@
 
 package bio.overture.archetype.grpc_template;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import bio.overture.archetype.grpc_template.util.PublicKeys;
-import bio.overture.archetype.grpc_template.util.Strings;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.PublicKey;
-import org.junit.jupiter.api.Test;
+
+import static bio.overture.archetype.grpc_template.util.Strings.inputStreamToString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PublicKeysTest {
   @Test
@@ -43,6 +44,6 @@ class PublicKeysTest {
   @Test
   void streamToString() throws IOException {
     String s = "test123";
-    assertEquals(Strings.toString(new ByteArrayInputStream(s.getBytes())), s);
+    assertEquals(inputStreamToString(new ByteArrayInputStream(s.getBytes())), s);
   }
 }

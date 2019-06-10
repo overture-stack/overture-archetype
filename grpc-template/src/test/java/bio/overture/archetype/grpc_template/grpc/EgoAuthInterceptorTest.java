@@ -19,7 +19,7 @@
 package bio.overture.archetype.grpc_template.grpc;
 
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor;
-import bio.overture.archetype.grpc_template.services.EgoService;
+import bio.overture.archetype.grpc_template.services.EgoSecurity;
 import bio.overture.proto.car_service.CarServiceGrpc;
 import bio.overture.proto.car_service.CreateCarRequest;
 import bio.overture.proto.car_service.CreateCarResponse;
@@ -61,15 +61,15 @@ import static org.mockito.BDDMockito.given;
 @RunWith(MockitoJUnitRunner.class)
 public class EgoAuthInterceptorTest {
 
-  @Mock private EgoService egoService;
+  @Mock private EgoSecurity egoSecurity;
 
-  @Mock private EgoService.EgoToken egoToken;
+  @Mock private EgoSecurity.EgoToken egoToken;
 
   private Channel channel;
 
   private String serverName;
 
-  private EgoService.EgoToken egoTokenSpy;
+  private EgoSecurity.EgoToken egoTokenSpy;
 
   @Rule public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
 
@@ -89,7 +89,7 @@ public class EgoAuthInterceptorTest {
           @Override
           public void createCar(
               CreateCarRequest request, StreamObserver<CreateCarResponse> responseObserver) {
-            EgoAuthInterceptorTest.this.egoTokenSpy = EgoAuthInterceptor.EGO_TOKEN.get();
+            EgoAuthInterceptorTest.this.egoTokenSpy = EgoAuthInterceptor.EGO_TOKEN_KEY.get();
             responseObserver.onNext(CreateCarResponse.getDefaultInstance());
             responseObserver.onCompleted();
           }
@@ -101,7 +101,7 @@ public class EgoAuthInterceptorTest {
             .directExecutor()
             .addService(
                 ServerInterceptors.intercept(
-                    programServiceImplBase, new EgoAuthInterceptor(egoService)))
+                    programServiceImplBase, new EgoAuthInterceptor(egoSecurity)))
             .build()
             .start());
 
@@ -110,12 +110,12 @@ public class EgoAuthInterceptorTest {
         CarServiceGrpc.newBlockingStub(channel).withInterceptors(jwtClientInterceptor);
 
     jwtClientInterceptor.token = "123";
-    given(egoService.verifyToken("123")).willReturn(Optional.of(egoToken));
+    given(egoSecurity.verifyToken("123")).willReturn(Optional.of(egoToken));
 
     blockingStub.createCar(CreateCarRequest.getDefaultInstance());
     assertNotNull(this.egoTokenSpy);
 
-    given(egoService.verifyToken("321")).willReturn(Optional.empty());
+    given(egoSecurity.verifyToken("321")).willReturn(Optional.empty());
     jwtClientInterceptor.token = "321";
     blockingStub.createCar(CreateCarRequest.getDefaultInstance());
     assertNull(this.egoTokenSpy);
@@ -158,7 +158,7 @@ public class EgoAuthInterceptorTest {
     grpcCleanup.register(
         InProcessServerBuilder.forName(serverName)
             .directExecutor()
-            .addService(ServerInterceptors.intercept(proxy, new EgoAuthInterceptor(egoService)))
+            .addService(ServerInterceptors.intercept(proxy, new EgoAuthInterceptor(egoSecurity)))
             .build()
             .start());
     val jwtClientInterceptor = new JwtClientInterceptor();
@@ -167,7 +167,7 @@ public class EgoAuthInterceptorTest {
 
     try {
       jwtClientInterceptor.token = "123";
-      given(egoService.verifyToken("123")).willReturn(Optional.empty());
+      given(egoSecurity.verifyToken("123")).willReturn(Optional.empty());
       blockingStub.createCar(CreateCarRequest.getDefaultInstance());
       fail("Expect an status runtime exception to be thrown");
     } catch (StatusRuntimeException e) {
@@ -175,7 +175,7 @@ public class EgoAuthInterceptorTest {
     }
 
     try {
-      given(egoService.verifyToken("123")).willReturn(Optional.of(egoToken));
+      given(egoSecurity.verifyToken("123")).willReturn(Optional.of(egoToken));
       given(egoToken.getType()).willReturn("USER");
       blockingStub.createCar(CreateCarRequest.getDefaultInstance());
       fail("Expect an status runtime exception to be thrown");
@@ -183,7 +183,7 @@ public class EgoAuthInterceptorTest {
       assertEquals(e.getStatus(), Status.fromCode(Status.Code.PERMISSION_DENIED));
     }
 
-    given(egoService.verifyToken("123")).willReturn(Optional.of(egoToken));
+    given(egoSecurity.verifyToken("123")).willReturn(Optional.of(egoToken));
     given(egoToken.getType()).willReturn("ADMIN");
     val resp = blockingStub.createCar(CreateCarRequest.getDefaultInstance());
     assertThat(resp, instanceOf(CreateCarResponse.class));

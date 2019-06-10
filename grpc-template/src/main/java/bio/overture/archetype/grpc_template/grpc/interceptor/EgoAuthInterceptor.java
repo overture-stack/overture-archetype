@@ -18,7 +18,8 @@
 
 package bio.overture.archetype.grpc_template.grpc.interceptor;
 
-import bio.overture.archetype.grpc_template.services.EgoService;
+import bio.overture.archetype.grpc_template.services.EgoSecurity;
+import bio.overture.archetype.grpc_template.services.EgoSecurity.EgoToken;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import io.grpc.Context;
@@ -29,6 +30,7 @@ import io.grpc.ServerCallHandler;
 import io.grpc.Status;
 import io.grpc.StatusException;
 import io.grpc.stub.StreamObserver;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -52,16 +54,17 @@ import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
 @Profile("auth")
 public class EgoAuthInterceptor implements AuthInterceptor {
 
-  private final EgoService egoService;
+  /**
+   * Constants
+   */
+  public static final Context.Key<EgoToken> EGO_TOKEN_KEY = Context.key("egoToken");
+  public static final Metadata.Key<String> JWT_METADATA_KEY = Metadata.Key.of("jwt", ASCII_STRING_MARSHALLER);
 
-  public static final Context.Key<EgoService.EgoToken> EGO_TOKEN = Context.key("egoToken");
-
-  public static final Metadata.Key<String> JWT_METADATA_KEY =
-      Metadata.Key.of("jwt", ASCII_STRING_MARSHALLER);
+  private final EgoSecurity egoSecurity;
 
   @Autowired
-  public EgoAuthInterceptor(EgoService egoService) {
-    this.egoService = egoService;
+  public EgoAuthInterceptor(@NonNull EgoSecurity egoSecurity) {
+    this.egoSecurity = egoSecurity;
   }
 
   @Override
@@ -69,8 +72,8 @@ public class EgoAuthInterceptor implements AuthInterceptor {
       ServerCall<ReqT, RespT> call, Metadata metadata, ServerCallHandler<ReqT, RespT> next) {
     // You need to implement validateIdentity
     String token = metadata.get(JWT_METADATA_KEY);
-    val egoToken = egoService.verifyToken(token);
-    Context context = Context.current().withValue(EGO_TOKEN, egoToken.orElse(null));
+    val egoToken = egoSecurity.verifyToken(token);
+    Context context = Context.current().withValue(EGO_TOKEN_KEY, egoToken.orElse(null));
     return Contexts.interceptCall(context, call, metadata, next);
   }
 
@@ -89,7 +92,7 @@ public class EgoAuthInterceptor implements AuthInterceptor {
       @SneakyThrows
       @Around("@annotation(egoAuth)")
       public Object checkIdentIty(ProceedingJoinPoint pjp, EgoAuth egoAuth) {
-        val egoToken = EGO_TOKEN.get();
+        val egoToken = EGO_TOKEN_KEY.get();
         val call = Iterables.get(List.of(pjp.getArgs()), 1, null);
         assert call instanceof StreamObserver;
 

@@ -18,6 +18,9 @@
 
 package bio.overture.archetype.grpc_template.util;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -25,8 +28,6 @@ import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 @Slf4j
 public class PublicKeys {
@@ -50,4 +51,5 @@ public class PublicKeys {
 
     return publicKey;
   }
+
 }

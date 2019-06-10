@@ -18,20 +18,21 @@
 
 package bio.overture.archetype.grpc_template.services;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import bio.overture.archetype.grpc_template.util.PublicKeys;
-import java.security.interfaces.RSAPublicKey;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-class EgoServiceTest {
+import java.security.interfaces.RSAPublicKey;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class EgoSecurityTest {
   @Test
   void verifyKey() {
     val rsaPublicKey = (RSAPublicKey) PublicKeys.getPublicKey(publickKey, "RSA");
 
-    val egoService = new EgoService(rsaPublicKey);
+    val egoService = new EgoSecurity(rsaPublicKey);
 
     assertTrue(
         egoService.verifyToken(validToken).isPresent(), "Valid token should return an ego token");
