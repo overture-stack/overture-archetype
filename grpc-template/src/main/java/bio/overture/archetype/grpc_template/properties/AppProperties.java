@@ -1,5 +1,6 @@
 package bio.overture.archetype.grpc_template.properties;
 
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
@@ -7,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotNull;
 
 @Slf4j
 @Component
@@ -25,5 +24,4 @@ public class AppProperties {
 
   /** GRPC can be disabled when doing test */
   @NotNull private Boolean grpcEnabled;
-
 }

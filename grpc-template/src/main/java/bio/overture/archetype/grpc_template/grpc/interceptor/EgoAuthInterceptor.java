@@ -18,6 +18,8 @@
 
 package bio.overture.archetype.grpc_template.grpc.interceptor;
 
+import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
+
 import bio.overture.archetype.grpc_template.services.EgoSecurity;
 import bio.overture.archetype.grpc_template.services.EgoSecurity.EgoToken;
 import com.google.common.collect.Iterables;
@@ -30,6 +32,12 @@ import io.grpc.ServerCallHandler;
 import io.grpc.Status;
 import io.grpc.StatusException;
 import io.grpc.stub.StreamObserver;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.List;
+import java.util.Set;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -41,24 +49,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.List;
-import java.util.Set;
-
-import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
-
 @Component
 @Profile("auth")
 public class EgoAuthInterceptor implements AuthInterceptor {
 
-  /**
-   * Constants
-   */
+  /** Constants */
   public static final Context.Key<EgoToken> EGO_TOKEN_KEY = Context.key("egoToken");
-  public static final Metadata.Key<String> JWT_METADATA_KEY = Metadata.Key.of("jwt", ASCII_STRING_MARSHALLER);
+
+  public static final Metadata.Key<String> JWT_METADATA_KEY =
+      Metadata.Key.of("jwt", ASCII_STRING_MARSHALLER);
 
   private final EgoSecurity egoSecurity;
 

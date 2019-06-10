@@ -18,6 +18,10 @@
 
 package bio.overture.archetype.grpc_template.grpc;
 
+import static io.grpc.health.v1.HealthCheckResponse.ServingStatus.NOT_SERVING;
+import static io.grpc.health.v1.HealthCheckResponse.ServingStatus.SERVING;
+import static java.util.Objects.isNull;
+
 import bio.overture.archetype.grpc_template.grpc.interceptor.AuthInterceptor;
 import bio.overture.archetype.grpc_template.properties.AppProperties;
 import io.grpc.Server;
@@ -26,6 +30,7 @@ import io.grpc.ServerInterceptors;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.services.HealthStatusManager;
+import java.io.IOException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,12 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-
-import static io.grpc.health.v1.HealthCheckResponse.ServingStatus.NOT_SERVING;
-import static io.grpc.health.v1.HealthCheckResponse.ServingStatus.SERVING;
-import static java.util.Objects.isNull;
 
 @Slf4j
 @Component
@@ -88,7 +87,7 @@ public class GRpcServerRunner implements CommandLineRunner, DisposableBean {
     startDaemonAwaitThread();
   }
 
-  private void setHealthStatus(Healthable healthableService, ServingStatus status){
+  private void setHealthStatus(Healthable healthableService, ServingStatus status) {
     healthStatusManager.setStatus(healthableService.getHealthCheckName(), status);
   }
 
@@ -108,7 +107,7 @@ public class GRpcServerRunner implements CommandLineRunner, DisposableBean {
   @Override
   public final void destroy() throws Exception {
     log.info("Shutting down gRPC server ...");
-    if (!isNull(server)){
+    if (!isNull(server)) {
       server.shutdown();
     }
     log.info("gRPC server stopped.");

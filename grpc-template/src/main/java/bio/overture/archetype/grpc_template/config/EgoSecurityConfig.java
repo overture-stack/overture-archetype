@@ -1,7 +1,10 @@
 package bio.overture.archetype.grpc_template.config;
 
+import static bio.overture.archetype.grpc_template.util.PublicKeys.getPublicKey;
+
 import bio.overture.archetype.grpc_template.client.EgoClient;
 import bio.overture.archetype.grpc_template.properties.EgoProperties;
+import java.security.interfaces.RSAPublicKey;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,10 +16,6 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.security.interfaces.RSAPublicKey;
-
-import static bio.overture.archetype.grpc_template.util.PublicKeys.getPublicKey;
 
 @Slf4j
 @Configuration

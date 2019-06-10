@@ -18,6 +18,14 @@
 
 package bio.overture.archetype.grpc_template.grpc;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.BDDMockito.given;
+
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor;
 import bio.overture.archetype.grpc_template.services.EgoSecurity;
 import bio.overture.proto.car_service.CarServiceGrpc;
@@ -37,6 +45,8 @@ import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;
 import io.grpc.stub.StreamObserver;
 import io.grpc.testing.GrpcCleanupRule;
+import java.io.IOException;
+import java.util.Optional;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,17 +55,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
-
-import java.io.IOException;
-import java.util.Optional;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.BDDMockito.given;
 
 // GrpcCleanupRule only works with junit 4
 @RunWith(MockitoJUnitRunner.class)

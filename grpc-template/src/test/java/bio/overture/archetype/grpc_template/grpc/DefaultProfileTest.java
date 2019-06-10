@@ -18,6 +18,9 @@
 
 package bio.overture.archetype.grpc_template.grpc;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor;
 import bio.overture.archetype.grpc_template.services.EgoSecurity;
 import bio.overture.proto.car_service.CarServiceGrpc;
@@ -35,9 +38,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.test.context.ActiveProfiles;
-
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles("default")
 public class DefaultProfileTest {

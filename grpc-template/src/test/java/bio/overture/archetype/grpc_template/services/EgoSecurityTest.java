@@ -18,14 +18,13 @@
 
 package bio.overture.archetype.grpc_template.services;
 
-import bio.overture.archetype.grpc_template.util.PublicKeys;
-import lombok.val;
-import org.junit.jupiter.api.Test;
-
-import java.security.interfaces.RSAPublicKey;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import bio.overture.archetype.grpc_template.util.PublicKeys;
+import java.security.interfaces.RSAPublicKey;
+import lombok.val;
+import org.junit.jupiter.api.Test;
 
 class EgoSecurityTest {
   @Test

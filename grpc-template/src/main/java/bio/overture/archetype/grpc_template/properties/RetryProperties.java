@@ -16,7 +16,13 @@
  */
 package bio.overture.archetype.grpc_template.properties;
 
+import static bio.overture.archetype.grpc_template.retry.RetryPolicies.getRetryableExceptions;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.springframework.retry.backoff.ExponentialBackOffPolicy.DEFAULT_MULTIPLIER;
+
 import bio.overture.archetype.grpc_template.retry.DefaultRetryListener;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -28,13 +34,6 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-
-import static bio.overture.archetype.grpc_template.retry.RetryPolicies.getRetryableExceptions;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.springframework.retry.backoff.ExponentialBackOffPolicy.DEFAULT_MULTIPLIER;
 
 @Getter
 @Setter

@@ -18,6 +18,10 @@
 
 package bio.overture.archetype.grpc_template.properties;
 
+import static java.time.Duration.ofSeconds;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +31,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-
-import static java.time.Duration.ofSeconds;
 
 /** Ego external configuration, served as metadata for application.yml */
 @Slf4j
