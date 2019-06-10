@@ -28,13 +28,12 @@ import bio.overture.proto.car_service.GetCarRequest;
 import bio.overture.proto.car_service.GetCarResponse;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import java.util.UUID;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Slf4j
 @Service
