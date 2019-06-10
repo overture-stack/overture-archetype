@@ -1,5 +1,7 @@
 package bio.overture.archetype.grpc_template.converter;
 
+import static org.mapstruct.MappingConstants.NULL;
+
 import bio.overture.archetype.grpc_template.model.CarModel;
 import bio.overture.archetype.grpc_template.model.DriveType;
 import bio.overture.proto.car_service.CarData;
@@ -11,8 +13,6 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;
-
-import static org.mapstruct.MappingConstants.NULL;
 
 @Mapper(
     config = ConverterConfig.class,
