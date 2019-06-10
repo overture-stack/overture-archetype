@@ -16,7 +16,7 @@
  *
  */
 
-package bio.overture.archetype.grpc_template.services;
+package bio.overture.archetype.grpc_template.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

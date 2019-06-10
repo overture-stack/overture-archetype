@@ -26,13 +26,15 @@ import bio.overture.proto.car_service.CreateCarRequest;
 import bio.overture.proto.car_service.CreateCarResponse;
 import bio.overture.proto.car_service.GetCarRequest;
 import bio.overture.proto.car_service.GetCarResponse;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import java.util.UUID;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -56,19 +58,25 @@ public class CarServiceImpl extends CarServiceGrpc.CarServiceImplBase implements
   @EgoAuth(typesAllowed = {"ADMIN"})
   public void createCar(
       CreateCarRequest request, StreamObserver<CreateCarResponse> responseObserver) {
-    log.info("Storing car: {}", request.toString());
+    CreateCarResponse response = null;
+    try {
+      log.info("Storing car: {}", request.toString());
 
-    // For example, convert the DTO of type CreateCarRequest to the DAO of type CarModel
-    val carModel = carConverter.createCarRequestToCarModel(request);
+      // For example, convert the DTO of type CreateCarRequest to the DAO of type CarModel
+      val carModel = carConverter.createCarRequestToCarModel(request);
 
-    // do something with carModel...
-    carModel.setId(UUID.randomUUID());
+      // do something with carModel...
+      carModel.setId(UUID.randomUUID());
 
-    // For example, list the first 100 users from ego
-    val users = egoClient.listUsers(0, 100, "");
+      // For example, list the first 100 users from ego
+      val users = egoClient.listUsers(0, 100, "");
 
-    // For example, convert the DAO of type CarModel to DTO of type CreateCarResponse
-    val response = carConverter.carModelToCreateCarResponse(carModel);
+      // For example, convert the DAO of type CarModel to DTO of type CreateCarResponse
+      response = carConverter.carModelToCreateCarResponse(carModel);
+    } catch (Throwable e) {
+      log.error("Error processing car request {}: {}", request, e.getMessage());
+      responseObserver.onError(Status.UNKNOWN.withDescription(e.getMessage()).asRuntimeException());
+    }
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }

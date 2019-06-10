@@ -27,7 +27,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.BDDMockito.given;
 
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor;
-import bio.overture.archetype.grpc_template.services.EgoSecurity;
+import bio.overture.archetype.grpc_template.security.EgoSecurity;
 import bio.overture.proto.car_service.CarServiceGrpc;
 import bio.overture.proto.car_service.CreateCarRequest;
 import bio.overture.proto.car_service.CreateCarResponse;

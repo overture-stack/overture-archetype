@@ -36,6 +36,6 @@ public class CarModel {
   private String model;
   private DriveType type;
   private LocalDateTime creationDate;
-  private int horsepower;
-  private boolean electric;
+  private Integer horsepower;
+  private Boolean electric;
 }

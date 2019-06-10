@@ -16,7 +16,7 @@
  *
  */
 
-package bio.overture.archetype.grpc_template.services;
+package bio.overture.archetype.grpc_template.security;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

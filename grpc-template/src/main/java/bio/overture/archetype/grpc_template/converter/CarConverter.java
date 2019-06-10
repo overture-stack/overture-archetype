@@ -1,7 +1,5 @@
 package bio.overture.archetype.grpc_template.converter;
 
-import static org.mapstruct.MappingConstants.NULL;
-
 import bio.overture.archetype.grpc_template.model.CarModel;
 import bio.overture.archetype.grpc_template.model.DriveType;
 import bio.overture.proto.car_service.CarData;
@@ -13,6 +11,8 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ValueMapping;
+
+import static org.mapstruct.MappingConstants.NULL;
 
 @Mapper(
     config = ConverterConfig.class,
@@ -46,11 +46,6 @@ public interface CarConverter {
   @InheritInverseConfiguration
   bio.overture.proto.car_service.DriveType driveTypeModelToProto(DriveType model);
 
-  default CarModel createCarRequestToCarModel(CreateCarRequest r) {
-    val carData = r.getCar();
-    return carDataToCarModel(carData);
-  }
-
   @Mapping(target = "clearField", ignore = true)
   @Mapping(target = "clearOneof", ignore = true)
   @Mapping(target = "mergeId", ignore = true)
@@ -66,6 +61,11 @@ public interface CarConverter {
 
   default CreateCarResponse carModelToCreateCarResponse(CarModel model) {
     return carModelToCreateCarResponse(0, model);
+  }
+
+  default CarModel createCarRequestToCarModel(CreateCarRequest r) {
+    val carData = r.getCar();
+    return carDataToCarModel(carData);
   }
 
   /**

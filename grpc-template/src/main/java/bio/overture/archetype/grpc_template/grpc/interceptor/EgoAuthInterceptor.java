@@ -20,8 +20,8 @@ package bio.overture.archetype.grpc_template.grpc.interceptor;
 
 import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
 
-import bio.overture.archetype.grpc_template.services.EgoSecurity;
-import bio.overture.archetype.grpc_template.services.EgoSecurity.EgoToken;
+import bio.overture.archetype.grpc_template.security.EgoSecurity;
+import bio.overture.archetype.grpc_template.security.EgoSecurity.EgoToken;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import io.grpc.Context;
