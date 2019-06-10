@@ -57,11 +57,13 @@
 		<mockito.junit.jupiter.version>2.25.1</mockito.junit.jupiter.version>
 		<junit.platform.commons.version>1.4.1</junit.platform.commons.version>
 		<figlet.version>0.0.8</figlet.version>
+		<mapstruct.version>1.3.0.Final</mapstruct.version>
 
 		<!--Extensions-->
 		<extension.kr.motod.version>1.5.0.Final</extension.kr.motod.version>
 
 		<!--Plugins-->
+		<plugin.compiler.version>3.8.1</plugin.compiler.version>
 		<plugin.surefire.version>2.22.1</plugin.surefire.version>
 		<plugin.protobuf.maven.version>0.5.1</plugin.protobuf.maven.version>
 		<plugin.protoc.version>3.6.1</plugin.protoc.version>
@@ -202,6 +204,11 @@
 			<artifactId>jfiglet</artifactId>
 			<version>${figlet.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
 	</dependencies>
 
 
@@ -215,6 +222,41 @@
 		</extensions>
 
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${plugin.compiler.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.springframework.boot</groupId>
+							<artifactId>spring-boot-configuration-processor</artifactId>
+							<version>${spring.boot.version}</version>
+						</path>
+					</annotationProcessorPaths>
+					<compilerArgs>
+						<!--These configurations should still be explicitly defined in a configuration class for mapstruct-->
+						<compilerArg>
+							-Amapstruct.defaultComponentModel=spring
+						</compilerArg>
+						<compilerArg>
+							-Amapstruct.unmappedTargetPolicy=ERROR
+						</compilerArg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>com.coveo</groupId>
 				<artifactId>fmt-maven-plugin</artifactId>

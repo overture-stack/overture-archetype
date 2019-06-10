@@ -19,9 +19,8 @@
 package bio.overture.archetype.grpc_template.grpc;
 
 import bio.overture.archetype.grpc_template.client.EgoClient;
+import bio.overture.archetype.grpc_template.converter.CarConverter;
 import bio.overture.archetype.grpc_template.grpc.interceptor.EgoAuthInterceptor.EgoAuth;
-import bio.overture.archetype.grpc_template.model.CarModel;
-import bio.overture.archetype.grpc_template.model.DriveType;
 import bio.overture.proto.car_service.CarServiceGrpc;
 import bio.overture.proto.car_service.CreateCarRequest;
 import bio.overture.proto.car_service.CreateCarResponse;
@@ -40,10 +39,12 @@ import org.springframework.stereotype.Service;
 public class CarServiceImpl extends CarServiceGrpc.CarServiceImplBase implements Healthable {
 
   private final EgoClient egoClient;
+  private final CarConverter carConverter;
 
   @Autowired
-  public CarServiceImpl(@NonNull EgoClient egoClient) {
+  public CarServiceImpl(@NonNull EgoClient egoClient, @NonNull CarConverter carConverter) {
     this.egoClient = egoClient;
+    this.carConverter = carConverter;
   }
 
   @Override
@@ -57,26 +58,17 @@ public class CarServiceImpl extends CarServiceGrpc.CarServiceImplBase implements
       CreateCarRequest request, StreamObserver<CreateCarResponse> responseObserver) {
     log.info("Storing car: {}", request.toString());
 
-    val newId = UUID.randomUUID();
-    val carData = request.getCar();
-
-    val carModel =
-        CarModel.builder()
-            .id(newId)
-            .brand(carData.getBrand())
-            .year(carData.getDateCreated().getYear())
-            .electric(carData.getElectric())
-            .horsepower(carData.getHorsepower())
-            .model(carData.getModel())
-            .type(DriveType.resolveDriveType(carData.getType().name()).orElse(null))
-            .build();
+    // For example, convert the DTO of type CreateCarRequest to the DAO of type CarModel
+    val carModel = carConverter.createCarRequestToCarModel(request);
 
     // do something with carModel...
+    carModel.setId(UUID.randomUUID());
 
     // For example, list the first 100 users from ego
     val users = egoClient.listUsers(0, 100, "");
 
-    val response = CreateCarResponse.newBuilder().setId(newId.toString()).setCar(carData).build();
+    // For example, convert the DAO of type CarModel to DTO of type CreateCarResponse
+    val response = carConverter.carModelToCreateCarResponse(carModel);
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }

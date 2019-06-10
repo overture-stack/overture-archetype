@@ -8,6 +8,7 @@ option objc_class_prefix = "CSP";
 package template_car_service;
 
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
 
 service CarService {
 
@@ -21,38 +22,41 @@ message CreateCarRequest {
 }
 
 message CreateCarResponse {
-    string id = 1;
+    google.protobuf.StringValue id = 1;
     CarData car = 2;
 }
 
 message GetCarRequest {
-    string id = 1;
+    google.protobuf.StringValue id = 1;
 }
 
 message GetCarResponse {
-    string id = 1;
+    google.protobuf.StringValue id = 1;
     CarData car = 2;
 }
 
 message CarData {
-    string brand = 2;
-    string model = 3;
-    DriveType type = 4;
-    Date dateCreated = 5;
-    int32 horsepower = 6;
-    bool electric = 7;
+    google.protobuf.StringValue brand = 1;
+    google.protobuf.StringValue model = 2;
+    DriveTypeValue type = 3;
+    google.protobuf.Timestamp creationDate = 4;
+    google.protobuf.Int32Value horsepower = 5;
+    google.protobuf.BoolValue electric = 6;
 }
 
 
 message Date {
-    int32 year = 1;
-    int32 month = 2;
-    int32 day = 3;
+    google.protobuf.Int32Value year = 1;
+    google.protobuf.Int32Value month = 2;
+    google.protobuf.Int32Value day = 3;
 }
 
 enum DriveType {
-    UNDEFINED = 0;
-    FRONT_WHEEL = 1;
-    BACK_WHEEL = 2;
-    ALL_WHEEL = 3;
+    FRONT_WHEEL = 0;
+    BACK_WHEEL = 1;
+    ALL_WHEEL = 2;
+}
+
+message DriveTypeValue {
+    DriveType value = 1;
 }

@@ -16,26 +16,19 @@
  *
  */
 
-package bio.overture.archetype.grpc_template.model;
+package bio.overture.archetype.grpc_template.converter;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.mapstruct.CollectionMappingStrategy;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.MapperConfig;
+import org.mapstruct.MappingInheritanceStrategy;
+import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.ReportingPolicy;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class CarModel {
-
-  private UUID id;
-  private String brand;
-  private String model;
-  private DriveType type;
-  private LocalDateTime creationDate;
-  private int horsepower;
-  private boolean electric;
-}
+@MapperConfig(
+    unmappedTargetPolicy = ReportingPolicy.ERROR,
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+    nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
+    collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
+    mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_ALL_FROM_CONFIG)
+public class ConverterConfig {}
