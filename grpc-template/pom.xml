@@ -30,7 +30,42 @@
 	<!--<version>${revision}${sha1}${changelist}</version>-->
 	<version>${revision}${sha1}${changelist}</version>
 	<name>grpc-template</name>
+	<url>https://github.com/overture-stack/overture-archetype/tree/master/grpc-template</url>
 	<description>Template GRPC project used to generate an archetype</description>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, version 3</name>
+			<url>https://www.gnu.org/licenses/agpl-3.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Robert Tisma</name>
+			<email>robtisma@example.com</email>
+			<organization>Overture</organization>
+			<organizationUrl>https://www.overture.bio</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:overture-stack/overture-archetype.git</connection>
+		<developerConnection>scm:git:ssh://github.com:overture-stack/overture-archetype.git</developerConnection>
+		<url>https://github.com/overture-stack/overture-archetype/tree/master/grpc-template</url>
+	</scm>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
+
+	
 
 	<properties>
 		<!--MUST MATCH PARENT POM VERSION-->
@@ -211,6 +246,18 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>ossrh</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<gpg.executable>gpg2</gpg.executable>
+				<gpg.passphrase>the_pass_phrase</gpg.passphrase>
+			</properties>
+		</profile>
+	</profiles>
 
 	<build>
 		<extensions>
@@ -222,6 +269,46 @@
 		</extensions>
 
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -318,6 +405,17 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>false</autoReleaseAfterClose>
+				</configuration>
 			</plugin>
 		</plugins>
 
