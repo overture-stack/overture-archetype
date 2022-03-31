@@ -34,7 +34,7 @@
 
 	<properties>
 		<!--MUST MATCH PARENT POM VERSION-->
-		<spring.boot.version>2.1.5.RELEASE</spring.boot.version>
+		<spring.boot.version>2.5.12</spring.boot.version>
 
 		<!-- Maven Build -->
 		<!-- Maven Friendly CI Version: https://maven.apache.org/maven-ci-friendly.html -->
